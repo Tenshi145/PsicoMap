@@ -1,8 +1,8 @@
 import { Handle, Position } from '@xyflow/react'
-import type { NodeProps } from '@xyflow/react'
+import type { NodeProps, Node } from '@xyflow/react'
 import type { NodeMeta } from '../../types'
 
-export default function StudentNode({ data, selected }: NodeProps<NodeMeta>) {
+export default function StudentNode({ data, selected }: NodeProps<Node<NodeMeta>>) {
   const initial = (data.label || '?')[0].toUpperCase()
   return (
     <div className={`relative ${selected ? 'ring-2 ring-violet-500 rounded-full' : ''}`}>

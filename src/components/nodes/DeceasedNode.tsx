@@ -1,8 +1,8 @@
 import { Handle, Position } from '@xyflow/react'
-import type { NodeProps } from '@xyflow/react'
+import type { NodeProps, Node } from '@xyflow/react'
 import type { NodeMeta } from '../../types'
 
-export default function DeceasedNode({ data, selected }: NodeProps<NodeMeta>) {
+export default function DeceasedNode({ data, selected }: NodeProps<Node<NodeMeta>>) {
   const isCircle = data.nodeType === 'female'
   return (
     <div className={`relative ${selected ? 'ring-2 ring-blue-500' : ''}`}>

@@ -1,8 +1,8 @@
 import { Handle, Position } from '@xyflow/react'
-import type { NodeProps } from '@xyflow/react'
+import type { NodeProps, Node } from '@xyflow/react'
 import type { NodeMeta } from '../../types'
 
-export default function MaleNode({ data, selected }: NodeProps<NodeMeta>) {
+export default function MaleNode({ data, selected }: NodeProps<Node<NodeMeta>>) {
   return (
     <div className={`relative ${selected ? 'ring-2 ring-blue-500 rounded-sm' : ''}`}>
       <svg width="60" height="60" viewBox="0 0 60 60">

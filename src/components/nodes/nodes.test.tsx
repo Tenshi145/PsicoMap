@@ -21,6 +21,9 @@ vi.mock('@xyflow/react', () => ({
 const baseProps = {
   id: 'n1',
   selected: false,
+  selectable: true,
+  deletable: true,
+  draggable: true,
   isConnectable: true,
   zIndex: 0,
   xPos: 0,
@@ -31,7 +34,8 @@ const baseProps = {
   type: 'male',
 }
 
-const makeProps = (overrides = {}) => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const makeProps = (overrides: Record<string, any> = {}) => ({
   ...baseProps,
   data: { label: 'Test', nodeType: 'male' as const, ...overrides },
 })
