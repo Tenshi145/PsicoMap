@@ -1,6 +1,6 @@
 import { type EdgeProps } from '@xyflow/react'
 
-export default function ConflictEdge({ sourceX, sourceY, targetX, targetY }: EdgeProps) {
+export default function ConflictEdge({ sourceX, sourceY, targetX, targetY, data }: EdgeProps) {
   const dx = targetX - sourceX
   const dy = targetY - sourceY
   const len = Math.sqrt(dx * dx + dy * dy)
@@ -18,11 +18,12 @@ export default function ConflictEdge({ sourceX, sourceY, targetX, targetY }: Edg
     points.push(`${x + nx * perp},${y + ny * perp}`)
   }
 
+  const stroke = (data?.color as string | undefined) ?? '#ef4444'
   return (
     <polyline
       points={points.join(' ')}
       fill="none"
-      stroke="#ef4444"
+      stroke={stroke}
       strokeWidth="2.5"
       strokeLinejoin="round"
     />

@@ -10,6 +10,7 @@ export type NodeMeta = {
   age?: number
   occupation?: string
   medicalNotes?: string
+  color?: string
 }
 
 export type FlowNode = Node<NodeMeta>
@@ -19,6 +20,7 @@ export interface FlowModuleState {
   nodes: FlowNode[]
   edges: FlowEdge[]
   selectedNodeId: string | null
+  selectedEdgeId: string | null
 }
 
 export interface Student {

@@ -1,5 +1,17 @@
+import { Trash2 } from 'lucide-react'
 import { useStore } from '../../store'
+import ColorPicker from './ColorPicker'
 import type { ModuleKey } from '../../types'
+
+const NODE_PRESETS = ['#fecaca', '#fed7aa', '#fef08a', '#bbf7d0', '#bfdbfe', '#e9d5ff', '#fbcfe8', '#e5e7eb']
+
+const NODE_DEFAULT_COLORS: Record<string, string> = {
+  male: '#dbeafe',
+  female: '#fce7f3',
+  pregnancy: '#fef9c3',
+  deceased: '#e5e7eb',
+  student: '#ede9fe',
+}
 
 interface NodeMetaFormProps {
   module: ModuleKey
@@ -9,6 +21,7 @@ interface NodeMetaFormProps {
 export default function NodeMetaForm({ module, nodeId }: NodeMetaFormProps) {
   const node = useStore((s) => s[module].nodes.find((n) => n.id === nodeId))
   const updateNodeMeta = useStore((s) => s.updateNodeMeta)
+  const removeNode = useStore((s) => s.removeNode)
 
   if (!node) return null
   const data = node.data
@@ -56,6 +69,24 @@ export default function NodeMetaForm({ module, nodeId }: NodeMetaFormProps) {
           onChange={(e) => update('medicalNotes', e.target.value)}
           placeholder="Diagnósticos, observaciones, etc."
         />
+      </div>
+      <div>
+        <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Color</label>
+        <ColorPicker
+          value={data.color}
+          defaultColor={NODE_DEFAULT_COLORS[data.nodeType] ?? '#e5e7eb'}
+          presets={NODE_PRESETS}
+          onChange={(c) => updateNodeMeta(module, nodeId, { color: c })}
+        />
+      </div>
+      <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+        <button
+          onClick={() => removeNode(module, nodeId)}
+          className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+        >
+          <Trash2 className="w-4 h-4" />
+          Eliminar figura
+        </button>
       </div>
     </div>
   )

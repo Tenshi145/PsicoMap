@@ -28,7 +28,10 @@ interface StoreActions {
   setEdges: (module: ModuleKey, edges: FlowEdge[]) => void
   addEdge: (module: ModuleKey, edge: FlowEdge) => void
   setSelectedNode: (module: ModuleKey, id: string | null) => void
+  setSelectedEdge: (module: ModuleKey, id: string | null) => void
   updateNodeMeta: (module: ModuleKey, id: string, meta: Partial<NodeMeta>) => void
+  updateEdgeColor: (module: ModuleKey, id: string, color: string | undefined) => void
+  removeEdge: (module: ModuleKey, id: string) => void
   clearModule: (module: ModuleKey) => void
   addStudent: (student: Student) => void
   removeStudent: (id: string) => void
@@ -43,6 +46,7 @@ const emptyModule = (): FlowModuleState => ({
   nodes: [],
   edges: [],
   selectedNodeId: null,
+  selectedEdgeId: null,
 })
 
 export const initialState: StoreState = {
@@ -77,6 +81,7 @@ export const useStore = create<RootStore>()(
           const mod = s[module] as FlowModuleState
           mod.nodes = mod.nodes.filter((n) => n.id !== id)
           mod.edges = mod.edges.filter((e) => e.source !== id && e.target !== id)
+          if (mod.selectedNodeId === id) mod.selectedNodeId = null
         }),
       setNodes: (module, nodes) =>
         set((s) => { (s[module] as FlowModuleState).nodes = nodes }),
@@ -85,11 +90,33 @@ export const useStore = create<RootStore>()(
       addEdge: (module, edge) =>
         set((s) => { (s[module] as FlowModuleState).edges.push(edge) }),
       setSelectedNode: (module, id) =>
-        set((s) => { s[module].selectedNodeId = id }),
+        set((s) => {
+          s[module].selectedNodeId = id
+          if (id) s[module].selectedEdgeId = null
+        }),
+      setSelectedEdge: (module, id) =>
+        set((s) => {
+          s[module].selectedEdgeId = id
+          if (id) s[module].selectedNodeId = null
+        }),
       updateNodeMeta: (module, id, meta) =>
         set((s) => {
           const node = s[module].nodes.find((n) => n.id === id)
           if (node) Object.assign(node.data, meta)
+        }),
+      updateEdgeColor: (module, id, color) =>
+        set((s) => {
+          const edge = (s[module] as FlowModuleState).edges.find((e) => e.id === id)
+          if (edge) {
+            if (!edge.data) edge.data = {}
+            edge.data.color = color
+          }
+        }),
+      removeEdge: (module, id) =>
+        set((s) => {
+          const mod = s[module] as FlowModuleState
+          mod.edges = mod.edges.filter((e) => e.id !== id)
+          if (mod.selectedEdgeId === id) mod.selectedEdgeId = null
         }),
       clearModule: (module) =>
         set((s) => {
@@ -97,6 +124,7 @@ export const useStore = create<RootStore>()(
           mod.nodes = []
           mod.edges = []
           mod.selectedNodeId = null
+          mod.selectedEdgeId = null
         }),
 
       addStudent: (student) =>

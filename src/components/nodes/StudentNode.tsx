@@ -8,7 +8,7 @@ export default function StudentNode({ data, selected }: NodeProps<Node<NodeMeta>
     <div className={`relative ${selected ? 'ring-2 ring-violet-500 rounded-full' : ''}`}>
       <svg width="56" height="56" viewBox="0 0 56 56">
         <circle cx="28" cy="28" r="26"
-          className="fill-violet-100 stroke-violet-700 dark:fill-violet-900 dark:stroke-violet-300"
+          fill={data.color ?? '#ede9fe'} stroke={data.color ? '#374151' : '#6d28d9'}
           strokeWidth="2.5" />
       </svg>
       <span className="absolute inset-0 flex items-center justify-center text-lg font-bold text-violet-800 dark:text-violet-200">

@@ -7,7 +7,7 @@ export default function FemaleNode({ data, selected }: NodeProps<Node<NodeMeta>>
     <div className={`relative ${selected ? 'ring-2 ring-blue-500 rounded-full' : ''}`}>
       <svg width="60" height="60" viewBox="0 0 60 60">
         <circle cx="30" cy="30" r="28"
-          className="fill-pink-100 stroke-pink-800 dark:fill-pink-900 dark:stroke-pink-300"
+          fill={data.color ?? '#fce7f3'} stroke={data.color ? '#374151' : '#9d174d'}
           strokeWidth="2.5" />
       </svg>
       <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-800 dark:text-gray-100 text-center px-2 leading-tight">

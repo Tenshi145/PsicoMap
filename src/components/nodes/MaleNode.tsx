@@ -7,7 +7,7 @@ export default function MaleNode({ data, selected }: NodeProps<Node<NodeMeta>>) 
     <div className={`relative ${selected ? 'ring-2 ring-blue-500 rounded-sm' : ''}`}>
       <svg width="60" height="60" viewBox="0 0 60 60">
         <rect x="2" y="2" width="56" height="56" rx="2"
-          className="fill-blue-100 stroke-blue-800 dark:fill-blue-900 dark:stroke-blue-300"
+          fill={data.color ?? '#dbeafe'} stroke={data.color ? '#374151' : '#1e40af'}
           strokeWidth="2.5" />
       </svg>
       <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-800 dark:text-gray-100 text-center px-1 leading-tight">

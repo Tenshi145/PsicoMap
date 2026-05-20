@@ -4,7 +4,13 @@ import {
   Background,
   Controls,
   MiniMap,
+  applyNodeChanges,
+  applyEdgeChanges,
+  SelectionMode,
   type OnConnect,
+  type OnNodesChange,
+  type OnEdgesChange,
+  type EdgeMouseHandler,
   type Connection,
   type NodeMouseHandler,
   BackgroundVariant,
@@ -28,6 +34,25 @@ export default function FlowCanvas({ module, defaultEdgeType = 'normal', onNodeC
   const setEdges = useStore((s) => s.setEdges)
   const addEdgeToStore = useStore((s) => s.addEdge)
   const setSelectedNode = useStore((s) => s.setSelectedNode)
+  const setSelectedEdge = useStore((s) => s.setSelectedEdge)
+
+  const onNodesChange = useCallback<OnNodesChange>(
+    (changes) => {
+      const removedIds = changes.filter((c) => c.type === 'remove').map((c) => c.id)
+      setNodes(module, applyNodeChanges(changes, nodes) as FlowNode[])
+      if (removedIds.length) {
+        setEdges(module, edges.filter((e) => !removedIds.includes(e.source) && !removedIds.includes(e.target)) as FlowEdge[])
+      }
+    },
+    [module, nodes, edges, setNodes, setEdges],
+  )
+
+  const onEdgesChange = useCallback<OnEdgesChange>(
+    (changes) => {
+      setEdges(module, applyEdgeChanges(changes, edges) as FlowEdge[])
+    },
+    [module, edges, setEdges],
+  )
 
   const onConnect = useCallback<OnConnect>(
     (params: Connection) => {
@@ -49,9 +74,17 @@ export default function FlowCanvas({ module, defaultEdgeType = 'normal', onNodeC
     [module, setSelectedNode, onNodeClick],
   )
 
+  const handleEdgeClick: EdgeMouseHandler = useCallback(
+    (_event, edge) => {
+      setSelectedEdge(module, edge.id)
+    },
+    [module, setSelectedEdge],
+  )
+
   const handlePaneClick = useCallback(() => {
     setSelectedNode(module, null)
-  }, [module, setSelectedNode])
+    setSelectedEdge(module, null)
+  }, [module, setSelectedNode, setSelectedEdge])
 
   return (
     <ReactFlow
@@ -59,26 +92,17 @@ export default function FlowCanvas({ module, defaultEdgeType = 'normal', onNodeC
       edges={edges}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
-      onNodesChange={(changes) => {
-        // Apply position changes from drag
-        const updated = nodes.map((n) => {
-          const change = changes.find((c) => c.type === 'position' && c.id === n.id)
-          if (change && change.type === 'position' && change.position) {
-            return { ...n, position: change.position }
-          }
-          return n
-        })
-        setNodes(module, updated as FlowNode[])
-      }}
-      onEdgesChange={(changes) => {
-        const removed = changes.filter((c) => c.type === 'remove').map((c) => c.id)
-        if (removed.length) {
-          setEdges(module, edges.filter((e) => !removed.includes(e.id)) as FlowEdge[])
-        }
-      }}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       onNodeClick={handleNodeClick}
+      onEdgeClick={handleEdgeClick}
       onPaneClick={handlePaneClick}
+      deleteKeyCode={['Delete', 'Backspace']}
+      multiSelectionKeyCode="Shift"
+      selectionOnDrag
+      panOnDrag={[1, 2]}
+      selectionMode={SelectionMode.Partial}
       fitView
       panOnScroll
       zoomOnPinch
