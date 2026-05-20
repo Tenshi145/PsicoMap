@@ -6,7 +6,7 @@ import type {
   FlowModuleState, SociogramaModuleState, Student, Relation,
 } from '../types'
 
-interface StoreState {
+export interface StoreState {
   theme: 'light' | 'dark'
   isMobile: boolean
   isBottomDrawerOpen: boolean
@@ -68,20 +68,22 @@ export const useStore = create<RootStore>()(
       setMetaPanelOpen: (v) => set((s) => { s.isMetaPanelOpen = v }),
 
       addNode: (module, node) =>
-        set((s) => { s[module].nodes.push(node as any) }),
+        set((s) => {
+          const mod = s[module] as FlowModuleState
+          mod.nodes.push(node)
+        }),
       removeNode: (module, id) =>
         set((s) => {
-          s[module].nodes = s[module].nodes.filter((n) => n.id !== id) as any
-          s[module].edges = s[module].edges.filter(
-            (e) => e.source !== id && e.target !== id,
-          ) as any
+          const mod = s[module] as FlowModuleState
+          mod.nodes = mod.nodes.filter((n) => n.id !== id)
+          mod.edges = mod.edges.filter((e) => e.source !== id && e.target !== id)
         }),
       setNodes: (module, nodes) =>
-        set((s) => { s[module].nodes = nodes as any }),
+        set((s) => { (s[module] as FlowModuleState).nodes = nodes }),
       setEdges: (module, edges) =>
-        set((s) => { s[module].edges = edges as any }),
+        set((s) => { (s[module] as FlowModuleState).edges = edges }),
       addEdge: (module, edge) =>
-        set((s) => { s[module].edges.push(edge as any) }),
+        set((s) => { (s[module] as FlowModuleState).edges.push(edge) }),
       setSelectedNode: (module, id) =>
         set((s) => { s[module].selectedNodeId = id }),
       updateNodeMeta: (module, id, meta) =>
@@ -91,9 +93,10 @@ export const useStore = create<RootStore>()(
         }),
       clearModule: (module) =>
         set((s) => {
-          s[module].nodes = []
-          s[module].edges = []
-          s[module].selectedNodeId = null
+          const mod = s[module] as FlowModuleState
+          mod.nodes = []
+          mod.edges = []
+          mod.selectedNodeId = null
         }),
 
       addStudent: (student) =>
@@ -115,7 +118,7 @@ export const useStore = create<RootStore>()(
         }),
       updateStudentName: (id, name) =>
         set((s) => {
-          const st = s.sociograma.students.find((s) => s.id === id)
+          const st = s.sociograma.students.find((student) => student.id === id)
           if (st) st.name = name
         }),
     })),
