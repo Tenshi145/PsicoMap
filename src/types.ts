@@ -4,7 +4,7 @@ export type NodeType = 'male' | 'female' | 'pregnancy' | 'deceased' | 'student'
 export type EdgeStyle = 'normal' | 'fused' | 'conflict' | 'break' | 'positive' | 'negative'
 export type ModuleKey = 'genograma' | 'familiograma' | 'sociograma'
 
-export interface NodeMeta {
+export type NodeMeta = {
   label: string
   nodeType: NodeType
   age?: number
